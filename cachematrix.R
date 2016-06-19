@@ -1,15 +1,43 @@
-## Put comments here that give an overall description of what your
-## functions do
+# Assignment: Caching the Inverse of a matrix
+# Author: Gianlu93 (Github account username)
 
-## Write a short comment describing this function
+# Code adapted from examples: makeVector & cachemean
 
-makeCacheMatrix <- function(x = matrix()) {
+# makeCacheMatrix creates a special matrix object that can cache its inverse
 
+makeCacheMatrix <- function(x = matrix()){ 
+    mat <- NULL
+    set <- function(y){ 
+        x <<- y
+        mat <<- NULL
+    }
+    get <- function() x 
+    setmatrix <- function(matrix) mat <<- matrix 
+    getmatrix <- function() mat                  
+    list(set = set, get = get, setmatrix = setmatrix, getmatrix = getmatrix)
 }
 
+# CacheSolve solves for the inverse of the matrix created by the function above.
+# Should the inverse already have been computed, CacheSolve will obtain it from
+# the cache thus reducing overall computing time.
 
-## Write a short comment describing this function
-
-cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+CacheSolve <- function(x, ...){
+    mat <- x$getmatrix()
+    if(!is.null(mat)){  
+        message("get cached data") 
+        return(mat)                
+    }
+    data <- x$get()         
+    mat <- solve(data, ...) 
+    x$setmatrix(mat)        
+    
+    mat
 }
+
+# Sample code to run (Note: we presume we are dealing with a square matrix)
+matrix1 <- matrix(seq(1:4), nrow =2, ncol =2) #square matrix with 4 elements
+my_data <- makeCacheMatrix(matrix1)
+CacheSolve(my_data)
+
+# Repeat the operation to verify the message "get cached data"
+CacheSolve(my_data)
